@@ -21,6 +21,19 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from pydantic.error_wrappers import ErrorWrapper
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://f510a4bd4f8158a283e3d7d89b138895@o4508117805367296.ingest.us.sentry.io/4508117899542528",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
+
 
 from .. import schema
 from ..errors import PredictorNotSet
@@ -253,7 +266,14 @@ def create_app(  # pylint: disable=too-many-arguments,too-many-locals,too-many-s
             "docs_url": "/docs",
             "openapi_url": "/openapi.json",
         }
+    
 
+
+    @app.get("/sentry-debug")
+    async def trigger_error():
+        division_by_zero = 1 / 0
+
+    
     @app.get("/health-check")
     async def healthcheck() -> Any:
         if app.state.health == Health.READY:
