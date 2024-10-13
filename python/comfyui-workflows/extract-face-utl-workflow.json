@@ -1,0 +1,78 @@
+{
+  "21": {
+    "inputs": {
+      "rotate_pitch": 0,
+      "rotate_yaw": 0,
+      "rotate_roll": 0,
+      "blink": 0,
+      "eyebrow": 0,
+      "wink": 0,
+      "pupil_x": 0,
+      "pupil_y": 0,
+      "aaa": 0,
+      "eee": 0,
+      "woo": 0,
+      "smile": 0.5700000000000001,
+      "src_ratio": 1,
+      "sample_ratio": 1,
+      "sample_parts": "All",
+      "crop_factor": 1.7000000000000002,
+      "src_image": [
+        "35",
+        0
+      ],
+      "sample_image": [
+        "36",
+        0
+      ]
+    },
+    "class_type": "ExpressionEditor",
+    "_meta": {
+      "title": "Expression Editor (PHM)"
+    }
+  },
+  "33": {
+    "inputs": {
+      "filename_prefix": "ExpressionEditing",
+      "images": [
+        "21",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "35": {
+    "inputs": {
+      "url_or_path": ""
+    },
+    "class_type": "LoadImageFromUrlOrPath",
+    "_meta": {
+      "title": "LoadImageFromUrlOrPath"
+    }
+  },
+  "36": {
+    "inputs": {
+      "url_or_path": ""
+    },
+    "class_type": "LoadImageFromUrlOrPath",
+    "_meta": {
+      "title": "LoadImageFromUrlOrPath"
+    }
+  },
+  "41": {
+    "inputs": {
+      "file_name": "ExpressionData",
+      "save_exp": [
+        "21",
+        2
+      ]
+    },
+    "class_type": "SaveExpData",
+    "_meta": {
+      "title": "Save Exp Data (PHM)"
+    }
+  }
+}
