@@ -22,7 +22,7 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from pydantic.error_wrappers import ErrorWrapper
 import sentry_sdk
-from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
+from py3nvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
 
 sentry_sdk.init(
     dsn="https://f510a4bd4f8158a283e3d7d89b138895@o4508117805367296.ingest.us.sentry.io/4508117899542528",
