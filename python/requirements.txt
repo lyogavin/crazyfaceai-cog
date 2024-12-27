@@ -19,3 +19,4 @@ pykalman==0.9.7
 decord==0.6.0
 onnxruntime-gpu==1.18.0
 colorama==0.4.6
+py3nvml==0.2.7

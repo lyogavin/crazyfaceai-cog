@@ -12,7 +12,7 @@ import traceback
 from datetime import datetime, timezone
 from enum import Enum, auto, unique
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Optional
-
+import torch
 import structlog
 import uvicorn
 from fastapi import Body, FastAPI, Header, HTTPException, Path, Response
@@ -22,6 +22,7 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from pydantic.error_wrappers import ErrorWrapper
 import sentry_sdk
+from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
 
 sentry_sdk.init(
     dsn="https://f510a4bd4f8158a283e3d7d89b138895@o4508117805367296.ingest.us.sentry.io/4508117899542528",
@@ -276,12 +277,23 @@ def create_app(  # pylint: disable=too-many-arguments,too-many-locals,too-many-s
     
     @app.get("/health-check")
     async def healthcheck() -> Any:
+        # Initialize NVML
+        nvmlInit()
+        handle = nvmlDeviceGetHandleByIndex(0)  # Assuming single GPU, use index 0
+        info = nvmlDeviceGetMemoryInfo(handle)
+
+        total_memory = info.total
+        used_memory = info.used
+        available_memory_ratio = (total_memory - used_memory) / total_memory
+        nvmlShutdown()
+
+        print(f"Available memory ratio: {available_memory_ratio}")
         if app.state.health == Health.READY:
             health = Health.BUSY if runner.is_busy() else Health.READY
         else:
             health = app.state.health
         setup = app.state.setup_result.to_dict() if app.state.setup_result else {}
-        return jsonable_encoder({"status": health.name, "setup": setup})
+        return jsonable_encoder({"status": health.name, "setup": setup, "available_memory_ratio": available_memory_ratio})
 
     @limited
     @app.post(
