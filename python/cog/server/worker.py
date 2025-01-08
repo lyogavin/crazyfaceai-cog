@@ -327,13 +327,21 @@ class ChildWorker(_spawn.Process):  # type: ignore
 
     def _loop(self, redirector: StreamRedirector) -> None:
         while True:
-            ev = self._events.recv()
-            if isinstance(ev, Shutdown):
+            try:
+                ev = self._events.recv()  # Directly receive without polling
+                if isinstance(ev, Shutdown):
+                    log.info("Received shutdown signal")
+                    break
+                elif isinstance(ev, PredictionInput):
+                    self._predict(ev.payload, redirector)
+                else:
+                    log.warn(f"Got unexpected event: {ev}")
+            except EOFError:
+                log.error("EOFError: Connection closed unexpectedly")
                 break
-            if isinstance(ev, PredictionInput):
-                self._predict(ev.payload, redirector)
-            else:
-                print(f"Got unexpected event: {ev}", file=sys.stderr)
+            except Exception as e:
+                log.error(f"Unhandled exception in _loop: {e}", exc_info=True)
+                break
 
     def _predict(
         self,
